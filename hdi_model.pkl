@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction Result — HDI Predictor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="page">
+  <header class="hero hero--result">
+    <span class="eyebrow">Prediction Result</span>
+    <h1>Estimated Development Score</h1>
+  </header>
+
+  <main class="panel result-panel">
+    <div class="score-block">
+      <div class="score-number">{{ score }}</div>
+      <div class="score-scale">on a 0.000 – 1.000 scale</div>
+      <div class="tier-badge tier-{{ category|lower|replace(' ', '-') }}">{{ category }} Development</div>
+    </div>
+
+    <div class="gauge">
+      <div class="gauge-track">
+        <div class="gauge-segment seg-low"></div>
+        <div class="gauge-segment seg-medium"></div>
+        <div class="gauge-segment seg-high"></div>
+        <div class="gauge-segment seg-veryhigh"></div>
+        <div class="gauge-marker" style="left: {{ (score * 100)|round(1) }}%;"></div>
+      </div>
+      <div class="gauge-labels">
+        <span>Low</span><span>Medium</span><span>High</span><span>Very High</span>
+      </div>
+    </div>
+
+    <h2 class="inputs-title">Indicators used</h2>
+    <table class="inputs-table">
+      <tr><td>Life expectancy at birth</td><td>{{ life_expectancy }} years</td></tr>
+      <tr><td>Mean years of schooling</td><td>{{ mean_years_schooling }} years</td></tr>
+      <tr><td>Expected years of schooling</td><td>{{ expected_years_schooling }} years</td></tr>
+      <tr><td>GNI per capita</td><td>${{ '{:,.0f}'.format(gni_per_capita) }} PPP</td></tr>
+    </table>
+
+    <a href="/" class="submit-btn secondary">← Try another set of indicators</a>
+  </main>
+
+  <footer class="footer">
+    <span>Gradient Boosting regression &middot; trained on socio-economic indicator data</span>
+  </footer>
+</div>
+</body>
+</html>

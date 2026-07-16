@@ -1,0 +1,117 @@
+# Human Development Index (HDI) Predictor
+
+A web-based machine learning application that predicts a country/region's **Human
+Development Index (HDI) score** from four core socio-economic indicators, then maps
+the score to a development category (Low / Medium / High / Very High). Built with
+Flask and scikit-learn.
+
+## Overview
+
+The HDI is normally computed only once a year, at an aggregated national level, by
+combining income, health, and education indicators through the UN's geometric-mean
+formula. This project trains a regression model on socio-economic indicator data so
+that a score can be estimated instantly, on demand, from just four numbers.
+
+## Key Features
+
+- **Predictive modeling** — Gradient Boosting Regressor estimates the continuous HDI
+  score (R² ≈ 0.97 on the held-out test set), benchmarked against Linear Regression
+  and Random Forest.
+- **User-friendly interface** — a simple, responsive form for entering indicator
+  values, with an instant result page showing the score, tier, and a visual gauge.
+- **Dynamic results** — real-time prediction of both the HDI score and its
+  corresponding development category.
+- **Cloud-deployable** — ships with a `Procfile` and `requirements.txt` for direct
+  deployment (e.g., on Render).
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Modeling & Analysis | Python, Jupyter Notebook, scikit-learn, pandas, NumPy |
+| Backend | Python (Flask) |
+| Frontend | HTML5, CSS3 |
+| Deployment | gunicorn, Procfile |
+
+## Repository Structure
+
+```
+├── data/
+│   └── hdi_dataset.csv          # Socio-economic indicator dataset (UNDP-style)
+├── notebooks/
+│   └── hdi_prediction.ipynb     # EDA, model training & comparison, model export
+├── models/
+│   ├── hdi_model.pkl            # Trained Gradient Boosting regressor
+│   ├── scaler.pkl               # Fitted StandardScaler
+│   └── features.pkl             # Ordered feature list used by the model
+├── templates/
+│   ├── index.html               # Indicator input form
+│   └── result.html              # Prediction result page
+├── static/
+│   └── style.css                # App styling
+├── app.py                       # Flask application
+├── generate_dataset.py          # Synthetic UNDP-formula dataset generator
+├── train_model.py               # Standalone training script (mirrors the notebook)
+├── requirements.txt
+├── Procfile
+└── README.md
+```
+
+## Model Inputs
+
+| Indicator | Description | Typical range |
+|---|---|---|
+| `life_expectancy` | Life expectancy at birth (years) | 50 – 85 |
+| `mean_years_schooling` | Average years of schooling completed by adults 25+ | 1 – 14 |
+| `expected_years_schooling` | Years of schooling a child entering school can expect | 5 – 20 |
+| `gni_per_capita` | Gross National Income per capita (PPP US$) | 300 – 120,000 |
+
+## Getting Started
+
+```bash
+git clone <your-repo-url>
+cd hdi-predictor
+pip install -r requirements.txt
+```
+
+### (Re)generate the dataset and train the model
+
+```bash
+python generate_dataset.py
+python train_model.py
+```
+
+### Run the web app locally
+
+```bash
+python app.py
+```
+
+Then open `http://127.0.0.1:5000` in a browser, enter the four indicator values,
+and submit to see the predicted HDI score and category.
+
+### Deploy
+
+The included `Procfile` (`web: gunicorn app:app`) and `requirements.txt` are ready
+for direct deployment to a platform such as Render — connect the repository and set
+the start command to use the Procfile.
+
+## Performance
+
+| Model | R² | MAE | RMSE |
+|---|---|---|---|
+| Linear Regression | ~0.82 | ~0.034 | ~0.045 |
+| Random Forest | ~0.94 | ~0.021 | ~0.027 |
+| **Gradient Boosting (selected)** | **~0.97** | **~0.013** | **~0.017** |
+
+Gradient Boosting was selected for deployment based on its highest R² and lowest
+error across all three metrics.
+
+## Notes
+
+`hdi_score` in the dataset is generated using the UNDP's own HDI formula
+(geometric mean of the Health, Education, and Income indices) applied to
+realistic, randomly sampled indicator values, with a small amount of noise added
+to mimic real-world measurement variation. Swap in an official UNDP Human
+Development Report indicator table in `data/hdi_dataset.csv` (same four feature
+columns) to retrain on real country data.
